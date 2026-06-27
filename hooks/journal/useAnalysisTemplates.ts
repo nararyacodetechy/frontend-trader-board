@@ -8,7 +8,7 @@ type UseAnalysisTemplatesParams = {
   initialTimeframe?: string;
 };
 
-function createTemplate(timeframe = "15m"): AnalysisTemplate {
+function createTemplate(timeframe = ""): AnalysisTemplate {
   return {
     id: Date.now(),
     timeframe,
@@ -22,10 +22,9 @@ function createTemplate(timeframe = "15m"): AnalysisTemplate {
 
 export function useAnalysisTemplates({
   inputRef,
-  initialTimeframe = "15m",
 }: UseAnalysisTemplatesParams = {}) {
   const [templates, setTemplates] = useState<AnalysisTemplate[]>([
-    createTemplate(initialTimeframe),
+    createTemplate(),
   ]);
 
   const resetInput = () => {
@@ -46,7 +45,7 @@ export function useAnalysisTemplates({
   };
 
   const addTemplate = () => {
-    setTemplates((prev) => [...prev, createTemplate(initialTimeframe)]);
+    setTemplates((prev) => [...prev, createTemplate()]);
   };
 
   const removeTemplate = (id: number) => {

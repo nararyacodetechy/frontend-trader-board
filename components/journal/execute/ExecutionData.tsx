@@ -1,60 +1,50 @@
-import { defaultExecutionFields } from '@/data/journal/execute/ExecutionData';
-import { useState } from 'react';
+import React from "react";
 
-export const ExecutionData = () => {
-    const [executionFields, setExecutionFields] =
-        useState(defaultExecutionFields);
+export type ExecutionField = {
+  id: number;
+  label: string;
+  value: string;
+  type?: string;
+  placeholder?: string;
+};
 
-    const updateExecutionField = (
-        id: number,
-        value: string
-    ) => {
-        setExecutionFields((prev) =>
-        prev.map((field) =>
-            field.id === id
-            ? {
-                ...field,
-                value,
-                }
-            : field
-        )
-        );
-    };
-      
-    return (
-        <div>
-            <div className="rounded-lg border border-gray-300 p-4">
-                <div className="mb-3">
-                    <h3 className="font-semibold">
-                    Execution Data
-                    </h3>
-                    <p className="text-xs">
-                    Fill execution data truly or clearly
-                    </p>
-                </div>
+type Props = {
+  title: string;
+  subtitle?: string;
+  fields: ExecutionField[];
+  onChange: (id: number, value: string) => void;
+  columns?: 1 | 2;
+};
 
-                <div className="grid grid-cols-2 gap-4">
-                    {executionFields.map((field) => (
-                        <div key={field.id}>
-                            <label className="block text-sm italic">
-                                {field.label}
-                            </label>
+export const ExecutionDataSection = ({
+  title,
+  subtitle,
+  fields,
+  onChange,
+  columns = 2,
+}: Props) => {
+  return (
+    <div className="rounded-lg border border-gray-300 p-4">
+      <div className="mb-3">
+        <h3 className="font-semibold">{title}</h3>
+        {subtitle && <p className="text-xs">{subtitle}</p>}
+      </div>
 
-                            <input
-                                value={field.value}
-                                onChange={(e) =>
-                                    updateExecutionField(
-                                    field.id,
-                                    e.target.value
-                                    )
-                                }
-                                className="h-12 w-full text-sm rounded-lg border border-gray-300 px-4"
-                                type="text"
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div> 
-        </div>
-    )
-}
+      <div className={`grid gap-4 ${columns === 2 ? "grid-cols-2" : "grid-cols-1"}`}>
+        {fields.map((field) => (
+          <div key={field.id}>
+            <label className="block text-sm italic">{field.label}</label>
+
+            <input
+              value={field.value}
+              onChange={(e) => onChange(field.id, e.target.value)}
+              className="h-12 w-full rounded-lg border border-gray-300 px-4 text-sm"
+              type={field.type ?? "text"}
+              placeholder={field.placeholder}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

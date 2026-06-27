@@ -4,19 +4,22 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import JournalHeader from "@/components/journal/general/JournalHeader";
-import AnalysisFormSection from "@/components/journal/template-analysis/AnalysisFormSection";
 import JournalFooter from "@/components/journal/general/JournalFooter";
+import AnalysisFormSection from "@/components/journal/template-analysis/AnalysisFormSection";
+import TagManagerModal from "@/components/journal/template-analysis/TagManagerModal";
 
 import { timeframes } from "@/constants/analysis/timeframes";
 import { useAnalysisTemplates } from "@/hooks/journal/useAnalysisTemplates";
+import { useTags } from "@/hooks/journal/useTags";
 
 import { TradeDirection } from "@/components/journal/execute/TradeDirection";
 import { ConfidenceLevel } from "@/components/journal/execute/ConfidenceLevel";
 import { EmotionLevel } from "@/components/journal/execute/EmotionLevel";
-import { ExecutionData } from "@/components/journal/execute/ExecutionData";
+import { ExecutionDataSection } from "@/components/journal/execute/ExecutionData";
 import { EntryConfirmation } from "@/components/journal/execute/EntryConfirmation";
-import { useTags } from "@/hooks/journal/useTags";
-import TagManagerModal from "@/components/journal/template-analysis/TagManagerModal";
+
+import { defaultExecutionFields } from "@/data/journal/execute/ExecutionData";
+import { executeEmotions } from "@/data/journal/execute/EmotionData";
 
 export default function ExecutePage() {
   const router = useRouter();
@@ -33,12 +36,21 @@ export default function ExecutePage() {
   } = useAnalysisTemplates({
     inputRef
   });
+
   const [showTagManager, setShowTagManager] = useState(false);
   const { tags, newTag, setNewTag, handleAddTag, handleDeleteTag } = useTags();
 
+  const [emotion, setEmotion] = useState("Calm");
+  const [executionFields, setExecutionFields] = useState(defaultExecutionFields);
+
+  const updateExecutionField = (id: number, value: string) => {
+    setExecutionFields((prev) =>
+      prev.map((field) => (field.id === id ? { ...field, value } : field))
+    );
+  };
+
   return (
     <div className="flex flex-col">
-      {/* HEADER */}
       <div className="p-4">
         <JournalHeader
           currentStep="EXECUTE"
@@ -48,20 +60,31 @@ export default function ExecutePage() {
         />
       </div>
 
-      {/* CONTENT */}
       <div className="grid grid-cols-12 gap-4 px-4 pb-4">
-        {/* LEFT */}
         <div className="col-span-5 h-fit shadow-sm">
           <div className="flex flex-col gap-4 rounded-md bg-white p-4">
             <EntryConfirmation />
             <TradeDirection />
             <ConfidenceLevel />
-            <EmotionLevel />
-            <ExecutionData />
+
+            <EmotionLevel
+              title="Emotion Before Entry"
+              subtitle="Your emotions reflect the end result"
+              value={emotion}
+              onChange={setEmotion}
+              options={executeEmotions}
+            />
+
+            <ExecutionDataSection
+              title="Execution Data"
+              subtitle="Fill execution data truly or clearly"
+              fields={executionFields}
+              onChange={updateExecutionField}
+              columns={2}
+            />
           </div>
         </div>
 
-        {/* RIGHT */}
         <div className="col-span-7 flex flex-col gap-6">
           {templates.map((template) => (
             <div key={template.id} className="rounded-md bg-white shadow-sm">
@@ -102,7 +125,7 @@ export default function ExecutePage() {
 
           <button
             onClick={addTemplate}
-            className="min-h-100 bg-white shadow-sm p-4 hover:bg-gray-50"
+            className="min-h-100 bg-white p-4 shadow-sm hover:bg-gray-50"
           >
             <div className="flex h-full w-full flex-col items-center justify-center rounded-md border border-dashed border-gray-300">
               <p className="mb-2 text-3xl">+</p>
@@ -112,7 +135,6 @@ export default function ExecutePage() {
         </div>
       </div>
 
-      {/* FOOTER */}
       <JournalFooter
         title="Execution Completed"
         description="Save your entry details before continuing."
