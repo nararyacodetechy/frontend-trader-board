@@ -20,6 +20,7 @@ import { EntryConfirmation } from "@/components/journal/execute/EntryConfirmatio
 
 import { defaultExecutionFields } from "@/data/journal/execute/ExecutionData";
 import { executeEmotions } from "@/data/journal/execute/EmotionData";
+import { ExecutionField } from "@/types/journal/execute-types";
 
 export default function ExecutePage() {
   const router = useRouter();
@@ -34,17 +35,18 @@ export default function ExecutePage() {
     toggleStrategy,
     toggleTag,
   } = useAnalysisTemplates({
-    inputRef
+    inputRef,
   });
 
   const [showTagManager, setShowTagManager] = useState(false);
   const { tags, newTag, setNewTag, handleAddTag, handleDeleteTag } = useTags();
 
   const [emotion, setEmotion] = useState("Calm");
-  const [executionFields, setExecutionFields] = useState(defaultExecutionFields);
+  const [fields, setFields] =
+    useState<ExecutionField[]>(defaultExecutionFields);
 
-  const updateExecutionField = (id: number, value: string) => {
-    setExecutionFields((prev) =>
+  const handleChange = (id: number, value: string) => {
+    setFields((prev) =>
       prev.map((field) => (field.id === id ? { ...field, value } : field))
     );
   };
@@ -60,8 +62,8 @@ export default function ExecutePage() {
         />
       </div>
 
-      <div className="grid grid-cols-12 gap-4 px-4 pb-4">
-        <div className="col-span-5 h-fit shadow-sm">
+      <div className="grid grid-cols-4 gap-4 px-4 pb-4">
+        <div className="col-span-2 h-fit shadow-sm">
           <div className="flex flex-col gap-4 rounded-md bg-white p-4">
             <EntryConfirmation />
             <TradeDirection />
@@ -76,16 +78,17 @@ export default function ExecutePage() {
             />
 
             <ExecutionDataSection
-              title="Execution Data"
-              subtitle="Fill execution data truly or clearly"
-              fields={executionFields}
-              onChange={updateExecutionField}
+              title="Execution"
+              subtitle="Isi dengan cepat. Field penting dipilih, sisanya dihitung otomatis."
+              fields={fields}
+              onChange={handleChange}
               columns={2}
+              pipSize={0.0001}
             />
           </div>
         </div>
 
-        <div className="col-span-7 flex flex-col gap-6">
+        <div className="col-span-2 flex flex-col gap-6">
           {templates.map((template) => (
             <div key={template.id} className="rounded-md bg-white shadow-sm">
               <div className="p-4">

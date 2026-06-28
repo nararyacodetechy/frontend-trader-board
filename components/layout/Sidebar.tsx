@@ -78,7 +78,7 @@ export default function Sidebar() {
       </div>
 
       {/* MENU */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex-1 overflow-y-auto px-4 py-6 scrollbar-none [&::-webkit-scrollbar]:hidden">
         <div className="flex flex-col gap-2">
           {items.map((item, index) => (
             <SidebarItem

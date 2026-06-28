@@ -151,7 +151,7 @@ export default function DescriptionInput({
             Notes
           </p>
           <p className="text-xs">
-            Describe your strategy in this timeframe here
+            Describe your detail notes here
           </p>
         </div>
 
